@@ -1,0 +1,565 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AirPay</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+a{text-decoration:none;color:inherit}button{font:inherit}
+/* AirPay — Venmo-structured iteration. Light, friendly, generous whitespace,
+   zig-zag feature rows, rounded cards. AirPay lime as the accent (not blue). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.venmo {
+  --bg: #ffffff;
+  --bg-soft: #f5f7f2;      /* very soft green-grey for alternating bands */
+  --bg-lime: #eef7e0;      /* pale lime wash */
+  --ink: #0d1411;          /* near-black text */
+  --ink-2: #46514b;        /* secondary text */
+  --faint: #8a938d;
+  --lime: #6fb52a;         /* slightly deeper lime so it reads on white */
+  --lime-bright: #87ca2d;
+  --lime-ink: #0d2b06;
+  --hair: rgba(13,20,17,0.10);
+  --sf: -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif;
+  --inter: "Inter", -apple-system, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--inter);
+  overflow-x: clip;
+  position: relative;
+}
+
+/* ---------- type ---------- */
+.venmo h1, .venmo h2, .venmo h3 { font-family: var(--sf); font-weight: 800; letter-spacing: -0.035em; line-height: 1.0; margin: 0; color: var(--ink); }
+.venmo .display { font-size: clamp(2.8rem, 7vw, 5.6rem); }
+.venmo .h2 { font-size: clamp(2rem, 4.6vw, 3.6rem); letter-spacing: -0.03em; }
+.venmo .lime { color: var(--lime); }
+.venmo p { margin: 0; }
+.venmo .lead { font-size: clamp(1.05rem, 1.5vw, 1.35rem); line-height: 1.5; color: var(--ink-2); }
+.venmo .kicker { font-family: var(--inter); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lime); }
+
+/* ---------- layout ---------- */
+.venmo .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.venmo section { position: relative; }
+.venmo .pad { padding: clamp(72px, 11vh, 150px) 0; }
+.venmo main, .venmo nav, .venmo footer { position: relative; z-index: 1; }
+
+/* alternating section bands */
+.venmo .band-soft { background: var(--bg-soft); }
+.venmo .band-lime { background: var(--bg-lime); }
+
+/* ---------- buttons ---------- */
+.venmo .btn { display: inline-flex; align-items: center; gap: 8px; height: 54px; padding: 0 28px; border-radius: 999px; font-family: var(--inter); font-weight: 700; font-size: 1.02rem; cursor: pointer; border: 2px solid transparent; transition: transform .18s cubic-bezier(.16,1,.3,1), background .18s, border-color .18s, color .18s; white-space: nowrap; }
+.venmo .btn-lime { background: var(--lime); color: #fff; }
+.venmo .btn-lime:hover { transform: translateY(-2px); background: var(--lime-bright); }
+.venmo .btn-ghost { background: transparent; color: var(--ink); border-color: var(--hair); }
+.venmo .btn-ghost:hover { transform: translateY(-2px); border-color: var(--ink); }
+.venmo .btn-dark { background: var(--ink); color: #fff; }
+.venmo .btn-dark:hover { transform: translateY(-2px); background: #1c2823; }
+.venmo .btn-sm { height: 46px; padding: 0 22px; font-size: .96rem; }
+
+/* ---------- nav ---------- */
+.venmo .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; transition: background .3s, box-shadow .3s, border-color .3s; border-bottom: 1px solid transparent; }
+.venmo .nav.scrolled { background: rgba(255,255,255,0.82); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); border-bottom-color: var(--hair); }
+.venmo .nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--sf); font-weight: 800; font-size: 1.3rem; letter-spacing: -0.02em; color: var(--ink); }
+.venmo .nav .brand img { height: 25px; width: auto; }
+.venmo .nav .links { display: flex; align-items: center; gap: 30px; }
+.venmo .nav .links a { color: var(--ink-2); font-weight: 600; font-size: .96rem; transition: color .2s; }
+.venmo .nav .links a:hover { color: var(--ink); }
+@media (max-width: 860px) { .venmo .nav .links { display: none; } }
+
+/* ---------- hero ---------- */
+.venmo .hero { min-height: 92svh; display: flex; align-items: center; overflow: hidden; padding-top: 60px;
+  background: radial-gradient(60% 60% at 78% 30%, var(--bg-lime), transparent 70%); }
+.venmo .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center; width: 100%; }
+.venmo .hero-copy .kicker { margin-bottom: 20px; }
+.venmo .hero-copy .lead { margin: 24px 0 34px; max-width: 32ch; }
+.venmo .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.venmo .hero-coin { position: relative; display: flex; justify-content: center; align-items: center; }
+.venmo .hero-coin img { width: min(120%, 620px); filter: drop-shadow(0 40px 80px rgba(60,90,20,0.28)); will-change: transform; }
+@media (max-width: 860px) {
+  .venmo .hero-grid { grid-template-columns: 1fr; }
+  .venmo .hero-coin { order: -1; }
+  .venmo .hero-coin img { width: min(80%, 340px); }
+}
+
+/* trust row */
+.venmo .trust { display: flex; align-items: center; gap: 24px; margin-top: 42px; flex-wrap: wrap; }
+.venmo .trust .lbl { font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.venmo .trust img { height: 22px; opacity: .8; }
+.venmo .trust .coinbase { height: 19px; }
+
+/* ---------- zig-zag feature rows (Venmo core) ---------- */
+.venmo .frow { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 6vw, 90px); align-items: center; }
+.venmo .frow + .frow { margin-top: clamp(72px, 10vh, 130px); }
+.venmo .frow.flip .frow-media { order: -1; }
+@media (max-width: 860px) {
+  .venmo .frow { grid-template-columns: 1fr; gap: 32px; }
+  .venmo .frow.flip .frow-media { order: 0; }
+}
+.venmo .frow-copy .h2 { margin-bottom: 18px; }
+.venmo .frow-copy .lead { margin-bottom: 28px; max-width: 40ch; }
+.venmo .frow-media { position: relative; }
+.venmo .media-card { border-radius: 28px; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--hair);
+  box-shadow: 0 30px 70px rgba(20,40,10,0.12); aspect-ratio: 4 / 3; position: relative; }
+.venmo .media-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- crypto split + coin tiles (original layout) ---------- */
+.venmo .split { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+@media (max-width: 860px) { .venmo .split { grid-template-columns: 1fr; } }
+.venmo .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.venmo .chip { aspect-ratio: 1; border-radius: 20px; background: var(--bg-soft); border: 1px solid var(--hair); display: grid; place-items: center; }
+.venmo .chip img { width: 46%; height: 46%; object-fit: contain; }
+/* dark tiles for the crypto grid (matches original /site look) */
+.venmo[data-theme="dark"] .chip { background: linear-gradient(180deg, #16190f, #0c0e08); border-color: var(--hair); }
+
+/* ---------- rounded feature chips list ---------- */
+.venmo .checklist { display: flex; flex-direction: column; gap: 14px; margin: 8px 0 30px; }
+.venmo .checklist li { list-style: none; display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--ink); font-size: 1.05rem; }
+.venmo .checklist .tick { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: var(--lime); color: #fff; display: grid; place-items: center; font-size: 15px; }
+
+/* ---------- "ways to use" pills grid ---------- */
+.venmo .ways { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; max-width: 900px; margin: 0 auto; }
+.venmo .way-pill { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: #fff; border: 1px solid var(--hair); font-weight: 600; color: var(--ink); box-shadow: 0 8px 24px rgba(20,40,10,0.06); transition: transform .2s, box-shadow .2s, border-color .2s; }
+.venmo .way-pill:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(20,40,10,0.12); border-color: rgba(111,181,42,0.5); }
+.venmo .way-pill .e { font-size: 1.2rem; }
+
+/* ---------- card swap (reused) light frame ---------- */
+.venmo .cardswap-labels div { transition: color .4s ease; }
+
+/* ---------- use-case switcher (light) ---------- */
+.venmo .uc-fade { animation: vFade .7s cubic-bezier(.16,1,.3,1) both; }
+@keyframes vFade { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+.venmo .uc-tabs { position: absolute; left: 0; right: 0; bottom: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 0 18px; z-index: 3; }
+.venmo .uc-tab { display: flex; flex-direction: column; align-items: center; gap: 9px; min-width: 118px; padding: 12px 18px 10px; cursor: pointer;
+  background: rgba(255,255,255,0.72); border: 1px solid rgba(13,20,17,0.10); border-radius: 16px; color: var(--ink-2);
+  font-family: var(--inter); font-weight: 700; font-size: .9rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: color .3s, background .3s, border-color .3s, transform .3s; }
+.venmo .uc-tab:hover { color: var(--ink); transform: translateY(-2px); }
+.venmo .uc-tab.active { color: var(--lime-ink); background: rgba(111,181,42,0.16); border-color: rgba(111,181,42,0.55); }
+.venmo .uc-tab-bar { width: 100%; height: 3px; border-radius: 3px; background: rgba(13,20,17,0.12); overflow: hidden; }
+.venmo .uc-tab-fill { display: block; width: 0%; height: 100%; border-radius: 3px; background: var(--lime); }
+@media (max-width: 640px){ .venmo .uc-tab { min-width: 0; flex: 1 1 40%; font-size: .8rem; } }
+
+/* floating pills over media (light shadow) */
+.venmo .fpill { position: absolute; display: inline-flex; align-items: center; gap: 12px; background: #fff; color: var(--ink);
+  padding: 12px 18px 12px 12px; border-radius: 18px; font-family: var(--inter); font-weight: 600; font-size: 15px;
+  box-shadow: 0 18px 44px rgba(20,40,10,0.22); animation: vPillIn .5s cubic-bezier(.16,1,.3,1) both; max-width: min(78vw, 360px); }
+@keyframes vPillIn { from { opacity: 0; transform: translateY(14px) scale(.94);} to { opacity: 1; transform: translateY(0) scale(1);} }
+.venmo .fpill .av { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+.venmo .fpill .g { color: var(--lime); font-weight: 700; }
+
+/* ---------- lifestyle pills band (light) ---------- */
+.venmo .band { border-radius: 28px; position: relative; min-height: 420px; overflow: hidden;
+  background: radial-gradient(80% 120% at 20% 0%, rgba(111,181,42,0.16), transparent 60%), var(--bg-soft); border: 1px solid var(--hair); }
+.venmo .band-mesh { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+.venmo .band .pill { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 10px; background: #fff; color: var(--ink);
+  padding: 13px 18px; border-radius: 16px; font-weight: 600; font-size: .98rem; box-shadow: 0 14px 40px rgba(20,40,10,0.14); }
+.venmo .band .pill .dot { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--lime), #35a0c4); }
+.venmo .band .pill .g { color: var(--lime); font-weight: 700; }
+.venmo .band .pill-reveal { opacity: 0; transform: translateY(22px) scale(.92); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+.venmo .band .pill-reveal.in { opacity: 1; transform: translateY(0) scale(1); animation: vFloat 6s ease-in-out infinite; }
+@keyframes vFloat { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-8px);} }
+
+/* ---------- Grow a business (Venmo-style feed post on a brand card) ---------- */
+.venmo .gb-card { position: relative; border-radius: 34px; overflow: hidden; padding: clamp(28px,6vw,72px);
+  background: linear-gradient(125deg, #a6e84a 0%, #8fd433 42%, #4e8a1a 100%);
+  min-height: clamp(460px, 62vh, 660px); display: grid; place-items: center; }
+.venmo .gb-stage { position: relative; width: 100%; max-width: 760px; height: clamp(420px,56vh,600px); --p: 0; --pl: 0; }
+
+/* business photo — starts small/tucked behind the post, springs out to the left */
+.venmo .gb-photo { position: absolute; left: 2%; top: 22%; width: clamp(150px,22%,210px); aspect-ratio: 3/4;
+  border-radius: 20px; overflow: hidden; box-shadow: 0 26px 60px rgba(0,0,0,0.32); z-index: 1;
+  transform-origin: right center;
+  transform: translateX(calc((1 - var(--p)) * 42%)) rotate(calc(-4deg * var(--p))) scale(calc(0.5 + 0.5 * var(--p)));
+  opacity: clamp(0, calc(var(--pl) * 2), 1); }
+.venmo .gb-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* the floating white post card — the anchor; scales up in first, then floats */
+.venmo .gb-post { position: absolute; left: 46%; top: 50%; width: min(86%, 420px);
+  background: #fff; color: #0d1411; border-radius: 26px;
+  padding: 20px 22px; box-shadow: 0 40px 90px rgba(0,0,0,0.30); z-index: 3; font-family: var(--inter);
+  transform: translate(-50%,-50%) rotate(-1.5deg) scale(calc(0.72 + 0.28 * var(--p)));
+  opacity: clamp(0, calc(var(--pl) * 3), 1); }
+.venmo .gb-post-top { display: flex; justify-content: space-between; align-items: center; color: #8a938d; font-size: .82rem; margin-bottom: 14px; }
+.venmo .gb-more { letter-spacing: 1px; }
+.venmo .gb-line { display: flex; align-items: center; gap: 8px; font-size: 1.06rem; line-height: 1.4; flex-wrap: wrap; }
+.venmo .gb-for { margin-top: 2px; margin-bottom: 14px; }
+.venmo .gb-mut { color: #8a938d; }
+.venmo .gb-av { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 13px; font-weight: 700; color: #fff; vertical-align: middle; }
+.venmo .gb-av-p { background: linear-gradient(135deg,#6fb52a,#35a0c4); font-size: 11px; }
+.venmo .gb-av-b { background: #0d1411; }
+.venmo .gb-media { position: relative; border-radius: 18px; overflow: hidden; height: 168px; margin-bottom: 16px; }
+.venmo .gb-media > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.venmo .gb-profile { position: absolute; right: 12px; bottom: 12px; width: 46%; background: #8fd433; border-radius: 18px; padding: 14px 16px; box-shadow: 0 14px 30px rgba(0,0,0,0.22);
+  transform-origin: bottom right;
+  transform: translate(calc((1 - var(--p)) * 30%), calc((1 - var(--p)) * 30%)) scale(calc(0.4 + 0.6 * var(--p)));
+  opacity: clamp(0, calc((var(--pl) - 0.35) * 3), 1); }
+.venmo .gb-logo { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #0d1411; color:#fff; font-size: 17px; margin-bottom: 24px; }
+.venmo .gb-pname { font-weight: 700; font-size: 1.02rem; color: #0d1411; }
+.venmo .gb-phandle { font-size: .82rem; color: rgba(13,20,17,0.62); }
+.venmo .gb-paidby { display: flex; align-items: center; gap: 8px; color: #46514b; font-size: .9rem; margin-bottom: 14px; }
+.venmo .gb-paidby b { color: #0d1411; }
+.venmo .gb-stack { display: inline-flex; }
+.venmo .gb-stack i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; margin-left: -8px; }
+.venmo .gb-stack i:first-child { margin-left: 0; background: linear-gradient(135deg,#ff8a5b,#ff4f9a); }
+.venmo .gb-stack i:nth-child(2){ background: linear-gradient(135deg,#7c5bff,#35a0c4); }
+.venmo .gb-stack i:nth-child(3){ background: linear-gradient(135deg,#6fb52a,#2dd4bf); }
+.venmo .gb-react { display: flex; gap: 14px; padding-top: 14px; border-top: 1px solid rgba(13,20,17,0.08); }
+.venmo .gb-react span { width: 40px; height: 40px; border-radius: 50%; background: #f3f5ef; display: grid; place-items: center; font-size: 16px; }
+
+/* dark business bubble + verified, right — springs out from behind the post */
+.venmo .gb-brand { position: absolute; right: 0; top: 50%; width: clamp(140px,22%,200px); aspect-ratio: 1; border-radius: 50%; background: #0d1411; display: grid; place-items: center; z-index: 2;
+  transform-origin: left center;
+  transform: translate(calc((1 - var(--p)) * -46%), -50%) scale(calc(0.5 + 0.5 * var(--p)));
+  opacity: clamp(0, calc((var(--pl) - 0.2) * 2.5), 1); }
+.venmo .gb-brand-word { color: #fff; font-family: var(--sf); font-weight: 800; font-size: clamp(1rem,2vw,1.5rem); letter-spacing: -0.02em; text-align: center; padding: 0 10px; }
+.venmo .gb-verified { position: absolute; right: 8%; bottom: 12%; width: 34px; height: 34px; border-radius: 50%; background: #35a0c4; display: grid; place-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transform: scale(clamp(0, calc((var(--pl) - 0.55) * 3.5), 1)); }
+@media (max-width: 620px){
+  .venmo .gb-photo, .venmo .gb-brand { display: none; }
+  .venmo .gb-post { width: min(94%, 400px); }
+}
+/* reduced motion: JS sets --p:1 so everything renders fully assembled, no transition */
+.venmo .gb-photo, .venmo .gb-post, .venmo .gb-profile, .venmo .gb-brand, .venmo .gb-verified { transition: transform .12s linear, opacity .12s linear; will-change: transform, opacity; }
+
+/* ---------- big CTA (lime slab, Venmo-ish) ---------- */
+.venmo .cta-wrap { border-radius: 34px; padding: clamp(48px,8vw,90px) 28px; text-align: center;
+  background: linear-gradient(140deg, var(--lime-bright), var(--lime) 60%, #4e8a1a); color: #fff; }
+.venmo .cta-wrap h2 { color: #fff; }
+.venmo .cta-wrap .lead { color: rgba(255,255,255,0.9); margin: 18px auto 30px; max-width: 40ch; }
+
+/* ---------- footer ---------- */
+.venmo footer { border-top: 1px solid var(--hair); }
+.venmo .foot-brand { display: flex; align-items: center; gap: 10px; font-family: var(--sf); font-weight: 800; font-size: 1.25rem; }
+.venmo .foot-brand img { height: 23px; width: auto; }
+.venmo .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 30px; }
+@media (max-width: 860px){ .venmo .foot-grid { grid-template-columns: 1fr 1fr; } }
+.venmo .foot-col h4 { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px; }
+.venmo .foot-col a { display: block; color: var(--ink-2); margin-bottom: 10px; font-size: .95rem; transition: color .2s; }
+.venmo .foot-col a:hover { color: var(--ink); }
+.venmo .foot-legal { color: var(--faint); font-size: .82rem; margin-top: 40px; line-height: 1.5; }
+
+/* ---------- scroll reveal ---------- */
+.venmo .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.venmo .reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .venmo .reveal { opacity: 1; transform: none; transition: none; }
+  .venmo .uc-fade, .venmo .fpill, .venmo .band .pill-reveal.in, .venmo .uc-tab.active .uc-tab-fill { animation: none; }
+  .venmo .band .pill-reveal { opacity: 1; transform: none; }
+  .venmo * { scroll-behavior: auto !important; }
+}
+
+/* ============================================================
+   DARK THEME — active version. Applies only when data-theme="dark".
+   Same layout/structure; deep charcoal canvas, lime accent, glass cards.
+   The light version (no data-theme) is preserved at /site-venmo-light.
+   ============================================================ */
+.venmo[data-theme="dark"] {
+  --bg: #000000;           /* pure black — all sections */
+  --bg-soft: #000000;      /* bands collapse to black */
+  --bg-lime: #000000;      /* bands collapse to black */
+  --ink: #f2f6ef;          /* near-white text */
+  --ink-2: #a8b1a4;        /* secondary text */
+  --faint: #6a7268;
+  --lime: #8fd433;         /* brighter lime — reads on dark */
+  --lime-bright: #a6e84a;
+  --lime-ink: #0a0c0b;     /* dark text on lime buttons */
+  --hair: rgba(255,255,255,0.10);
+  background: var(--bg);
+  color: var(--ink);
+}
+/* every band is black now — kill the alternating washes */
+.venmo[data-theme="dark"] .band-soft,
+.venmo[data-theme="dark"] .band-lime { background: #000000; }
+
+/* type + accents */
+.venmo[data-theme="dark"] h1, .venmo[data-theme="dark"] h2, .venmo[data-theme="dark"] h3 { color: var(--ink); }
+.venmo[data-theme="dark"] .lime { color: var(--lime); }
+.venmo[data-theme="dark"] .kicker { color: var(--lime); }
+
+/* buttons — lime pill gets dark ink; dark button becomes a light glass slab */
+.venmo[data-theme="dark"] .btn-lime { background: var(--lime); color: var(--lime-ink); }
+.venmo[data-theme="dark"] .btn-lime:hover { background: var(--lime-bright); }
+.venmo[data-theme="dark"] .btn-ghost { color: var(--ink); border-color: rgba(255,255,255,0.2); }
+.venmo[data-theme="dark"] .btn-ghost:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
+.venmo[data-theme="dark"] .btn-dark { background: var(--ink); color: var(--bg); }
+.venmo[data-theme="dark"] .btn-dark:hover { background: #ffffff; }
+
+/* nav — dark glass, white brand mark */
+.venmo[data-theme="dark"] .nav.scrolled { background: rgba(10,12,11,0.72); border-bottom-color: var(--hair); }
+.venmo[data-theme="dark"] .nav .brand { color: var(--ink); }
+.venmo[data-theme="dark"] .nav .brand img,
+.venmo[data-theme="dark"] .foot-brand img { filter: brightness(0) invert(1); }
+.venmo[data-theme="dark"] .nav .links a { color: var(--ink-2); }
+.venmo[data-theme="dark"] .nav .links a:hover { color: var(--ink); }
+
+/* hero — lime glow on charcoal */
+.venmo[data-theme="dark"] .hero { background: radial-gradient(60% 60% at 78% 30%, rgba(143,212,51,0.14), transparent 70%); }
+
+/* trust logos — force to white so they read on dark */
+.venmo[data-theme="dark"] .trust img { filter: brightness(0) invert(1) !important; opacity: .85; }
+.venmo[data-theme="dark"] .trust .lbl { color: var(--faint); }
+
+/* feature media cards — glass on charcoal */
+.venmo[data-theme="dark"] .media-card { background: #12140f; border-color: var(--hair); box-shadow: 0 30px 70px rgba(0,0,0,0.5); }
+.venmo[data-theme="dark"] .media-card[style] { background: #12140f !important; }
+.venmo[data-theme="dark"] .checklist li { color: var(--ink); }
+
+/* crypto coin cells → dark tiles */
+.venmo[data-theme="dark"] .frow-media > div > div { background: #171a13 !important; border-color: var(--hair) !important; }
+
+/* ways-to-use pills → glass */
+.venmo[data-theme="dark"] .way-pill { background: rgba(255,255,255,0.04); border-color: var(--hair); color: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.venmo[data-theme="dark"] .way-pill:hover { box-shadow: 0 14px 34px rgba(143,212,51,0.12); border-color: rgba(143,212,51,0.5); }
+
+/* card-swap labels: inactive lighter grey */
+.venmo[data-theme="dark"] .cardswap-labels div { color: rgba(242,246,239,0.26); }
+
+/* use-case tabs — dark glass */
+.venmo[data-theme="dark"] .uc-tab { background: rgba(255,255,255,0.06); border-color: var(--hair); color: var(--ink-2); }
+.venmo[data-theme="dark"] .uc-tab:hover { color: var(--ink); }
+.venmo[data-theme="dark"] .uc-tab.active { color: var(--lime); background: rgba(143,212,51,0.14); border-color: rgba(143,212,51,0.5); }
+.venmo[data-theme="dark"] .uc-tab-bar { background: rgba(255,255,255,0.12); }
+
+/* floating pills → dark glass */
+.venmo[data-theme="dark"] .fpill { background: #14170f; color: var(--ink); box-shadow: 0 18px 44px rgba(0,0,0,0.5); }
+.venmo[data-theme="dark"] .fpill .g { color: var(--lime); }
+
+/* lifestyle band + pills */
+.venmo[data-theme="dark"] .band { background: radial-gradient(80% 120% at 20% 0%, rgba(143,212,51,0.14), transparent 60%), #10130f; border-color: var(--hair); }
+.venmo[data-theme="dark"] .band .pill { background: #16190f; color: var(--ink); box-shadow: 0 14px 40px rgba(0,0,0,0.45); }
+.venmo[data-theme="dark"] .band .pill .g { color: var(--lime); }
+
+/* big CTA — black panel with a lime glow ring (no bright slab on the black page) */
+.venmo[data-theme="dark"] .cta-wrap { background:
+    radial-gradient(80% 130% at 50% 0%, rgba(143,212,51,0.18), transparent 60%), #050605;
+  border: 1px solid rgba(143,212,51,0.35); box-shadow: 0 40px 120px -30px rgba(143,212,51,0.28); color: var(--ink); }
+.venmo[data-theme="dark"] .cta-wrap h2 { color: var(--ink); }
+.venmo[data-theme="dark"] .cta-wrap .lead { color: var(--ink-2); }
+.venmo[data-theme="dark"] .cta-wrap .btn-dark { background: var(--lime); color: var(--lime-ink); }
+.venmo[data-theme="dark"] .cta-wrap .btn-dark:hover { background: var(--lime-bright); }
+.venmo[data-theme="dark"] .cta-wrap .btn-ghost { border-color: rgba(255,255,255,0.5); color: var(--ink); }
+
+/* ============================================================
+   "VENMO SHORTER" variant (/site-venmo-shorter) — trimmed cut.
+   Expand the use-case media so it fills the container like the
+   other sections (taller frame, matches .gb-card presence).
+   ============================================================ */
+/* Use-case section (/site-venmo-shorter) — WIDE LANDSCAPE media, whole section
+   fits in ONE viewport (heading + media + tabs), never cut off.
+   Media is a wide 16:9-ish frame that sizes to the space left under the heading,
+   capped so the pinned section always fits. */
+.venmo-shorter #tip .wrap > div:last-child > div {
+  height: min(52vh, calc(100vh - 290px)) !important;   /* landscape, fits under the ~214px heading within 100vh */
+  min-height: 380px;
+}
+/* keep the heading block tight so the media stays centered in the pin */
+.venmo-shorter #tip .wrap > div:first-child { margin-bottom: 20px !important; min-height: 0 !important; }
+.venmo-shorter #tip { padding-top: 0 !important; padding-bottom: 0 !important; }
+
+
+</style></head>
+<body>
+<div class="venmo" data-theme="dark" id="top">
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/airpay-mark-dark.svg" alt=""> AirPay</a>
+  <div class="links"><a href="#pay">Pay</a><a href="#card">Card</a><a href="#crypto">Crypto</a><a href="#business">Business</a></div>
+  <a class="btn btn-lime btn-sm" href="#get">Get the app</a>
+</nav>
+<main>
+
+<section id="top" class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="kicker">Swipe-to-pay · nearby · no fees</div>
+      <h1 class="display">Pay anyone.<br>In a <span class="lime">swipe</span>.</h1>
+      <p class="lead">Send money to friends, split the bill, tip the band, spend your crypto — all in one friendly app.</p>
+      <div class="hero-cta">
+        <a class="btn btn-lime" href="#get">Get the app</a>
+        <a class="btn btn-ghost" href="#pay">See how it works</a>
+      </div>
+      <div class="trust">
+        <span class="lbl">Works with</span>
+        <img class="coinbase" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/coinbase.svg" alt="Coinbase" style="filter:none">
+        <img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/applepay.svg" alt="Apple Pay" style="filter:none">
+        <img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/googlepay.svg" alt="Google Pay" style="filter:none">
+      </div>
+    </div>
+    <div class="hero-coin"><img id="coin" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/coin.png" alt="AirPay coin"></div>
+  </div>
+</section>
+<section id="pay">
+  <div class="wrap" style="padding:clamp(64px,10vh,130px) 0 clamp(28px,5vh,60px);text-align:center;max-width:720px;margin:0 auto">
+    <div class="kicker" style="margin-bottom:14px">Pay &amp; get paid</div>
+    <h2 class="h2">Pick a person. Swipe. <span class="lime">Done.</span></h2>
+    <p class="lead" style="margin-top:18px;max-width:44ch;margin-left:auto;margin-right:auto">Choose who to pay, then swipe up to send. Money lands instantly — no account numbers, no fees, no waiting.</p>
+  </div>
+</section>
+<section id="crypto" class="pad">
+  <div class="wrap split">
+    <div class="reveal">
+      <div class="kicker" style="margin-bottom:16px">One balance, every coin</div>
+      <h2 class="h2">Spend crypto<br>like it's cash.</h2>
+      <p class="lead" style="margin:22px 0 30px;max-width:34ch">Hold and pay with Bitcoin, Ethereum, or USDC — powered by Coinbase. Swipe to pay and the conversion just happens.</p>
+      <a class="btn btn-ghost" href="#get">Explore wallets</a>
+    </div>
+    <div class="chips reveal">
+      <div class="chip" style="transition-delay:0ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/btc.svg" alt="BTC"></div><div class="chip" style="transition-delay:60ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/eth.svg" alt="ETH"></div><div class="chip" style="transition-delay:120ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/usdc.svg" alt="USDC"></div><div class="chip" style="transition-delay:180ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/btc.svg" alt="BTC"></div><div class="chip" style="transition-delay:240ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/eth.svg" alt="ETH"></div><div class="chip" style="transition-delay:300ms"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/usdc.svg" alt="USDC"></div>
+    </div>
+  </div>
+</section>
+<section id="card" class="pad">
+  <div class="wrap frow">
+    <div class="frow-copy">
+      <div class="kicker" style="margin-bottom:14px">The AirPay card</div>
+      <h2 class="h2" style="margin-bottom:22px">All your cards,<br>one swipe.</h2>
+      <div class="cardswap-labels" style="margin-bottom:26px">
+        <div style="font-family:var(--sf);font-weight:800;font-size:clamp(1.4rem,2.4vw,2rem);line-height:1.35;letter-spacing:-0.02em;color:var(--ink)">Tap to pay</div>
+        <div style="font-family:var(--sf);font-weight:800;font-size:clamp(1.4rem,2.4vw,2rem);line-height:1.35;letter-spacing:-0.02em;color:var(--faint)">Every balance</div>
+        <div style="font-family:var(--sf);font-weight:800;font-size:clamp(1.4rem,2.4vw,2rem);line-height:1.35;letter-spacing:-0.02em;color:var(--faint)">Online too</div>
+      </div>
+      <p class="lead" style="margin-bottom:24px;max-width:40ch">Your AirPay card lives in the app and in your wallet. Tap the terminal, done — no cash, no card reader dance.</p>
+      <a class="btn btn-dark" href="#get">Get the AirPay Card</a>
+    </div>
+    <div class="frow-media" style="display:flex;justify-content:center;align-items:center">
+      <img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/airpay-card.svg" alt="AirPay card" style="width:min(108%,600px);filter:drop-shadow(0 44px 90px rgba(20,40,10,0.34))">
+    </div>
+  </div>
+</section>
+<section id="tip" class="pad" data-uc>
+  <div class="wrap">
+    <div style="text-align:center;max-width:720px;margin:0 auto 30px;min-height:160px">
+      <div class="uc-fade kicker uc-kicker" style="margin-bottom:12px">Tip anyone, anywhere</div>
+      <h2 class="uc-fade h2 uc-h">Love the song?<br><span class="lime uc-h2">Tip the artist.</span></h2>
+      <p class="uc-fade lead uc-copy" style="margin-top:14px;max-width:48ch;margin-left:auto;margin-right:auto">No cash on you? Tip the street musician in one swipe — they feel the love instantly.</p>
+    </div>
+    <div>
+      <div style="position:relative;width:100%;height:min(52vh, calc(100vh - 300px));min-height:380px;overflow:hidden;border-radius:28px;border:1px solid var(--hair);box-shadow:0 34px 80px rgba(0,0,0,0.45);background:#0a0a0c">
+        <img class="uc-img" data-i="0" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/musician.jpg" alt="Musician" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;opacity:1;transform:scale(1);transition:opacity .9s ease, transform 6s ease"><img class="uc-img" data-i="1" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/restaurant.jpg" alt="Dining" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;opacity:0;transform:scale(1.04);transition:opacity .9s ease, transform 6s ease"><img class="uc-img" data-i="2" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/valet.jpg" alt="Ride" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;opacity:0;transform:scale(1.04);transition:opacity .9s ease, transform 6s ease"><img class="uc-img" data-i="3" src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/parking.jpg" alt="Parking" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:0;transform:scale(1.04);transition:opacity .9s ease, transform 6s ease">
+        <div aria-hidden style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.28), transparent 30%, transparent 68%, rgba(0,0,0,0.5))"></div>
+        <div class="fpill uc-pill" style="top:20px;right:20px">
+          <span class="av uc-pill-av" style="background:linear-gradient(135deg,#6fb52a,#35a0c4)">OS</span>
+          <span style="line-height:1.3"><b class="uc-pill-who">You tipped the guitarist</b> <span class="g uc-pill-g">$5</span> <span class="uc-pill-note" style="color:#888;font-weight:500">🎸</span></span>
+        </div>
+        <div class="uc-tabs">
+          <button class="uc-tab active" data-i="0"><span>Musician</span><span class="uc-tab-bar"><span class="uc-tab-fill" style="width:100%;transition:width .5s ease"></span></span></button><button class="uc-tab" data-i="1"><span>Dining</span><span class="uc-tab-bar"><span class="uc-tab-fill" style="width:0%;transition:width .5s ease"></span></span></button><button class="uc-tab" data-i="2"><span>Ride</span><span class="uc-tab-bar"><span class="uc-tab-fill" style="width:0%;transition:width .5s ease"></span></span></button><button class="uc-tab" data-i="3"><span>Parking</span><span class="uc-tab-bar"><span class="uc-tab-fill" style="width:0%;transition:width .5s ease"></span></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="pad band-soft">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;max-width:640px;margin:0 auto 42px">
+      <div class="kicker" style="margin-bottom:14px">Endless ways</div>
+      <h2 class="h2">However you pay,<br>AirPay's in there.</h2>
+    </div>
+    <div class="ways reveal"><span class="way-pill"><span class="e">🍔</span> Split a meal</span><span class="way-pill"><span class="e">🎸</span> Tip the band</span><span class="way-pill"><span class="e">🚕</span> Pay your ride</span><span class="way-pill"><span class="e">🏠</span> Send rent</span><span class="way-pill"><span class="e">☕</span> Grab a coffee</span><span class="way-pill"><span class="e">🎁</span> Chip in on a gift</span><span class="way-pill"><span class="e">🅿️</span> Pay for parking</span><span class="way-pill"><span class="e">₿</span> Spend crypto</span><span class="way-pill"><span class="e">💇</span> Tip your barber</span><span class="way-pill"><span class="e">🛒</span> Check out online</span><span class="way-pill"><span class="e">🎟️</span> Buy tickets together</span><span class="way-pill"><span class="e">🐕</span> Pay the dog walker</span></div>
+  </div>
+</section>
+<section id="business" class="pad">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;max-width:680px;margin:0 auto 46px">
+      <div class="kicker" style="margin-bottom:14px">For businesses</div>
+      <h2 class="h2">Grow a business.</h2>
+      <p class="lead" style="margin-top:18px;max-width:46ch;margin-left:auto;margin-right:auto">Create a business profile to engage customers and take payments with a checkout people already know and trust.</p>
+      <a class="btn btn-ghost" href="#get" style="margin-top:26px">See ways to get paid</a>
+    </div>
+    <div class="gb-card reveal">
+      <div class="gb-stage" id="gb-stage" style="--p:1;--pl:1">
+        <div class="gb-photo"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/maker.jpg" alt="Cafe owner"></div>
+        <div class="gb-post">
+          <div class="gb-post-top"><span class="gb-time">2 hours ago</span><span class="gb-more">···</span></div>
+          <div class="gb-line"><span class="gb-av gb-av-p">MC</span><span><b>Maya</b> <span class="gb-mut">paid</span> <span class="gb-av gb-av-b">☕</span> <b>Cafe Verde</b></span></div>
+          <div class="gb-line gb-for"><span class="gb-mut">for</span> <b>Oat latte</b> ☕</div>
+          <div class="gb-media"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/restaurant.jpg" alt="Cafe Verde">
+            <div class="gb-profile"><span class="gb-logo">☕</span><div class="gb-pname">Cafe Verde</div><div class="gb-phandle">@cafeverde</div></div>
+          </div>
+          <div class="gb-paidby"><span class="gb-stack"><i></i><i></i><i></i></span> Paid by <b>Grace H.</b> and 123 others</div>
+          <div class="gb-react"><span>💬</span><span>❤️</span><span>😊</span></div>
+        </div>
+        <div class="gb-brand"><span class="gb-brand-word">Cafe Verde</span>
+          <span class="gb-verified" aria-hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="m7 12.5 3 3 7-8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="get" class="pad">
+  <div class="wrap">
+    <div class="cta-wrap reveal">
+      <h2 class="h2">The simplest way<br>to move money.</h2>
+      <p class="lead">Download AirPay and send your first payment in one swipe.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-dark" href="#">Download for iOS</a>
+        <a class="btn btn-ghost" href="#" style="border-color:rgba(255,255,255,0.6);color:#fff">Download for Android</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="pad">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><img src="https://raw.githubusercontent.com/omario2001/airpay-assets/main/airpay-mark-dark.svg" alt=""> AirPay</div>
+        <p style="color:var(--ink-2);margin-top:14px;max-width:26ch">Move money in a swipe. Nearby, private, instant.</p>
+      </div>
+      <div class="foot-col"><h4>Product</h4><a href="#pay">How it works</a><a href="#card">Card</a><a href="#crypto">Crypto</a></div>
+      <div class="foot-col"><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Delete account</a></div>
+    </div>
+    <p class="foot-legal">© 2026 AirPay Inc. Payments powered by Coinbase. AirPay is a technology company, not a bank.</p>
+  </div>
+</footer>
+</div>
+<script>
+(function(){
+  var root=document.currentScript.closest('.venmo')||document.querySelector('.venmo');
+  // nav scrolled
+  var nav=root.querySelector('#nav');
+  function onScroll(){ if(nav) nav.classList.toggle('scrolled', window.scrollY>24);
+    var coin=root.querySelector('#coin'); if(coin){ var y=window.scrollY; coin.style.transform='translateY('+(y*-0.05)+'px) rotate('+(-6+y*0.03)+'deg)'; } }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  // reveal
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.16,rootMargin:'0px 0px -8% 0px'});
+  root.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  // use-case tabs
+  var UC=[{"tab":"Musician","kicker":"Tip anyone, anywhere","h1":"Love the song?","h2":"Tip the artist.","copy":"No cash on you? Tip the street musician in one swipe — they feel the love instantly.","pill":{"init":"OS","grad":"linear-gradient(135deg,#6fb52a,#35a0c4)","who":"You tipped the guitarist","g":"$5","note":"🎸"}},{"tab":"Dining","kicker":"Split the check","h1":"Great dinner?","h2":"Split it in a swipe.","copy":"Skip the awkward math. Split the bill with the whole table and settle up before dessert lands.","pill":{"init":"MK","grad":"linear-gradient(135deg,#ff8a5b,#ff4f9a)","who":"You split with 4","g":"$36","note":"🍝"}},{"tab":"Ride","kicker":"Pay the driver","h1":"Good ride?","h2":"Pay them instantly.","copy":"Tip your driver or settle the fare the second you arrive — no fumbling for cash at the curb.","pill":{"init":"DR","grad":"linear-gradient(135deg,#7c5bff,#35a0c4)","who":"You paid your ride","g":"$18","note":"🚗"}},{"tab":"Parking","kicker":"Pay on the spot","h1":"Need to park?","h2":"Swipe and go.","copy":"Pay for parking right from your phone — no meter, no ticket machine, no coins.","pill":{"init":"PK","grad":"linear-gradient(135deg,#2dd4bf,#6fb52a)","who":"Parking paid · 2h","g":"$8","note":"🅿️"}}];
+  var sec=root.querySelector('[data-uc]');
+  if(sec){
+    function setUC(i){
+      sec.querySelectorAll('.uc-img').forEach(function(im){var on=+im.dataset.i===i;im.style.opacity=on?1:0;im.style.transform=on?'scale(1)':'scale(1.04)';});
+      sec.querySelectorAll('.uc-tab').forEach(function(b){var on=+b.dataset.i===i;b.classList.toggle('active',on);var f=b.querySelector('.uc-tab-fill');if(f)f.style.width=on?'100%':'0%';});
+      var u=UC[i];
+      var k=sec.querySelector('.uc-kicker'),h=sec.querySelector('.uc-h'),c=sec.querySelector('.uc-copy');
+      k.textContent=u.kicker; h.innerHTML=u.h1+'<br><span class="lime uc-h2">'+u.h2+'</span>'; c.textContent=u.copy;
+      [k,h,c].forEach(function(el){el.classList.remove('uc-fade');void el.offsetWidth;el.classList.add('uc-fade');});
+      var p=sec.querySelector('.uc-pill');p.querySelector('.uc-pill-av').style.background=u.pill.grad;p.querySelector('.uc-pill-av').textContent=u.pill.init;
+      p.querySelector('.uc-pill-who').textContent=u.pill.who;p.querySelector('.uc-pill-g').textContent=u.pill.g;p.querySelector('.uc-pill-note').textContent=u.pill.note;
+      p.classList.remove('fpill');void p.offsetWidth;p.classList.add('fpill');
+    }
+    sec.querySelectorAll('.uc-tab').forEach(function(b){b.addEventListener('click',function(){setUC(+b.dataset.i);});});
+    var uci=0; setInterval(function(){ if(document.hidden)return; uci=(uci+1)%UC.length; setUC(uci); },5200);
+  }
+  // pills band mesh
+  var band=root.querySelector('#band'), cv=root.querySelector('#band-mesh');
+  if(band&&cv){
+    var ctx=cv.getContext('2d'),t=0,dpr=Math.min(window.devicePixelRatio||1,2),A2=[];
+    function anchors(){var br=band.getBoundingClientRect();return Array.prototype.map.call(band.querySelectorAll('.pill'),function(p){var r=p.getBoundingClientRect();return{x:r.left-br.left+r.width/2,y:r.top-br.top+r.height/2,w:r.width,h:r.height};});}
+    function resize(){dpr=Math.min(window.devicePixelRatio||1,2);var r=band.getBoundingClientRect();cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);cv.style.width=r.width+'px';cv.style.height=r.height+'px';ctx.setTransform(dpr,0,0,dpr,0,0);A2=anchors();}
+    var LINKS=[[0,3],[1,2],[2,4],[1,3],[0,2]],STR=11;
+    function edge(p,tx,ty){var dx=tx-p.x,dy=ty-p.y,l=Math.hypot(dx,dy)||1;return{x:p.x+dx/l*(p.w/2-6),y:p.y+dy/l*(p.h/2-4)};}
+    function bridge(a,b,ph){var pa=edge(a,b.x,b.y),pb=edge(b,a.x,a.y),ha=Math.min(a.h*0.5,20),hb=Math.min(b.h*0.5,20),mp=0.06,SEG=48,dx=pb.x-pa.x,dy=pb.y-pa.y,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L;
+      for(var s=0;s<STR;s++){var u=(s/(STR-1))*2-1;ctx.beginPath();for(var i=0;i<=SEG;i++){var tt=i/SEG,cx=pa.x+dx*tt,cy=pa.y+dy*tt,env=mp+(1-mp)*Math.pow(Math.abs(tt-0.5)*2,1.8),half=ha+(hb-ha)*tt,weave=Math.sin(tt*Math.PI*3+ph+s*0.8)*2.4*env,off=u*half*env+weave,x=cx+nx*off,y=cy+ny*off;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}var al=0.07+0.10*(1-Math.abs(u));ctx.strokeStyle='rgba(143,212,51,'+al+')';ctx.lineWidth=1;ctx.stroke();}
+      for(var d=0;d<3;d++){var tt=((t*0.32+ph*0.1+d/3)%1),x=pa.x+dx*tt,y=pa.y+dy*tt,env=mp+(1-mp)*Math.pow(Math.abs(tt-0.5)*2,1.8),r=2.2*(0.6+env),g=ctx.createRadialGradient(x,y,0,x,y,r*3);g.addColorStop(0,'rgba(190,245,130,0.95)');g.addColorStop(1,'rgba(143,212,51,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fill();}}
+    function render(){t+=0.016;ctx.clearRect(0,0,cv.width,cv.height);ctx.globalCompositeOperation='lighter';LINKS.forEach(function(pair,k){if(A2[pair[0]]&&A2[pair[1]])bridge(A2[pair[0]],A2[pair[1]],k*1.3+t*0.6);});ctx.globalCompositeOperation='source-over';}
+    resize();(function loop(){if(!document.hidden)render();requestAnimationFrame(loop);})();
+    window.addEventListener('resize',resize);setTimeout(resize,900);
+  }
+})();
+</script>
+</body></html>
