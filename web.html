@@ -606,6 +606,9 @@ a{text-decoration:none;color:inherit}button{font:inherit}
   // cross-fades State1 (find who to pay) -> State2 (swipe -> success), all scrubbed.
   (function(){
     var jsec=root.querySelector('#journey'); if(!jsec||typeof gsap==='undefined')return;
+    // On narrow screens (mobile) the CSS lays the journey out static + centered —
+    // skip the pinned scrub entirely so it doesn't fight the layout.
+    if(window.innerWidth<=860) return;
     var reduce=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)').matches:false;
     var q=function(s){return jsec.querySelector(s);};
     var phone=q('#jphone'),s1=q('#js1'),s2=q('#js2'),knob=q('#jknob'),fill=q('#jfill'),succ=q('#jsuccess'),l1=q('#jl1'),l2=q('#jl2');

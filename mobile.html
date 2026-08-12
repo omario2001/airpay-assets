@@ -375,10 +375,37 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo .display{font-size:clamp(2.4rem,11vw,3.4rem)}
 .venmo .foot-grid{grid-template-columns:1fr 1fr}
 .venmo .gb-photo,.venmo .gb-brand{display:none}.venmo .gb-post{width:min(94%,400px)}
+
+/* ===== MOBILE: CENTER EVERYTHING ===== */
+.venmo .hero{padding-top:40px}
+.venmo .hero-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
+.venmo .hero-copy .lead{max-width:40ch;margin-left:auto;margin-right:auto}
+.venmo .hero-cta{justify-content:center}
+.venmo .trust{justify-content:center}
+/* crypto + card copy columns centered */
+.venmo #crypto .split > div:first-child{text-align:center;display:flex;flex-direction:column;align-items:center}
+.venmo #crypto .split .lead{margin-left:auto;margin-right:auto}
+.venmo .chips{max-width:340px;margin:8px auto 0}
+.venmo .frow-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
+.venmo .frow-copy .lead,.venmo .frow-copy .checklist{margin-left:auto;margin-right:auto}
+.venmo .checklist li{justify-content:center}
+.venmo .cardswap-labels{text-align:center}
+
 /* card: un-pin on mobile — flow as a normal static section (no giant 180vh pin) */
 .venmo [data-card]{height:auto!important}
 .venmo [data-card] > div{position:static!important;height:auto!important;padding:clamp(56px,8vh,90px) 0!important}
-.venmo [data-cardimg]{transform:none!important;width:min(92%,420px)!important;margin:24px auto 0}
+.venmo [data-cardimg]{transform:none!important;width:min(88%,380px)!important;margin:24px auto 0}
+
+/* PHONE JOURNEY: static, centered, smaller phone that fits the mobile screen */
+#journey{height:auto!important;padding:clamp(48px,7vh,80px) 0!important;border-top:1px solid var(--hair)}
+#journey > div:first-child{position:static!important;top:auto!important;min-height:0!important;text-align:center;margin-bottom:8px}
+#jphone{position:relative!important;top:auto!important;left:auto!important;margin:20px auto 0!important;
+  width:230px!important;transform:none!important}
+#jphone > div{width:230px!important}
+/* static two-up on mobile: caption then phone (no scrub pin), show State 1 */
+#jl2{display:none}
+#js2{opacity:0}
+#js1{opacity:1}
 
 </style></head>
 <body>
@@ -621,6 +648,9 @@ a{text-decoration:none;color:inherit}button{font:inherit}
   // cross-fades State1 (find who to pay) -> State2 (swipe -> success), all scrubbed.
   (function(){
     var jsec=root.querySelector('#journey'); if(!jsec||typeof gsap==='undefined')return;
+    // On narrow screens (mobile) the CSS lays the journey out static + centered —
+    // skip the pinned scrub entirely so it doesn't fight the layout.
+    if(window.innerWidth<=860) return;
     var reduce=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)').matches:false;
     var q=function(s){return jsec.querySelector(s);};
     var phone=q('#jphone'),s1=q('#js1'),s2=q('#js2'),knob=q('#jknob'),fill=q('#jfill'),succ=q('#jsuccess'),l1=q('#jl1'),l2=q('#jl2');
