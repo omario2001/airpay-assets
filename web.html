@@ -643,18 +643,22 @@ a{text-decoration:none;color:inherit}button{font:inherit}
       gsap.set(l2,{opacity:1}); gsap.set(l1,{opacity:0}); return;
     }
     var isMobile=window.innerWidth<=860;
-    gsap.set(phone,{xPercent:-60,yPercent:4,rotate:-14,scale:0.8});
+    // Mobile keeps the ORIGINAL phone proportions (scaled via CSS), but a GENTLER
+    // travel range so the phone stays fully on the small screen.
+    var X0=isMobile?-26:-60, X1=isMobile?26:62, Y1=isMobile?26:40;
+    var SC0=isMobile?0.66:0.8, SCmid=isMobile?0.7:1.04, SCend=isMobile?0.64:0.95;
+    gsap.set(phone,{xPercent:X0,yPercent:4,rotate:-14,scale:SC0});
     gsap.set(s2,{opacity:0}); gsap.set(succ,{opacity:0,scale:0.6}); gsap.set(fill,{width:'14%'}); gsap.set(knob,{left:'6px'}); gsap.set(l2,{opacity:0,y:20});
 
     // Build the same keyframe timeline, but PAUSED — we scrub it manually so it
     // works identically whether driven by ScrollTrigger (desktop pin) or by a
     // plain scroll listener (mobile, where stacked pins are unreliable).
     var tl=gsap.timeline({paused:true});
-    tl.to(phone,{xPercent:62,ease:'power1.inOut',duration:1},0);
-    tl.to(phone,{yPercent:40,ease:'power2.in',duration:1},0);
+    tl.to(phone,{xPercent:X1,ease:'power1.inOut',duration:1},0);
+    tl.to(phone,{yPercent:Y1,ease:'power2.in',duration:1},0);
     tl.to(phone,{rotate:12,ease:'sine.inOut',duration:1},0);
-    tl.to(phone,{scale:1.04,ease:'power1.out',duration:0.5},0);
-    tl.to(phone,{scale:0.95,ease:'power1.in',duration:0.5},0.5);
+    tl.to(phone,{scale:SCmid,ease:'power1.out',duration:0.5},0);
+    tl.to(phone,{scale:SCend,ease:'power1.in',duration:0.5},0.5);
     tl.to(l1,{opacity:0,y:-20,duration:0.18},0.4);
     tl.to(s1,{opacity:0,duration:0.2},0.42);
     tl.to(s2,{opacity:1,duration:0.2},0.46);

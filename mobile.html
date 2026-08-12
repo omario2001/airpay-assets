@@ -388,11 +388,16 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo .gb-photo,.venmo .gb-brand{display:none}.venmo .gb-post{width:min(94%,400px)}
 
 /* ===== MOBILE: CENTER EVERYTHING ===== */
-.venmo .hero{padding-top:40px}
+/* hero fills the viewport: coin + headline + paragraph on-screen, the CTA
+   buttons + trust row sit just BELOW the fold (revealed on first scroll) */
+.venmo .hero{min-height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:0;align-items:start}
+.venmo .hero-grid{gap:clamp(16px,3vh,32px);padding-top:6px}
 .venmo .hero-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
 .venmo .hero-copy .lead{max-width:40ch;margin-left:auto;margin-right:auto}
-.venmo .hero-cta{justify-content:center}
-.venmo .trust{justify-content:center}
+/* push the CTA + trust row below the fold so the hero (coin + headline + copy)
+   fills the first screen; they reveal on the first scroll */
+.venmo .hero-cta{justify-content:center;margin-top:clamp(300px,54vh,540px)}
+.venmo .trust{justify-content:center;margin-top:32px}
 /* crypto + card copy columns centered */
 .venmo #crypto .split > div:first-child{text-align:center;display:flex;flex-direction:column;align-items:center}
 .venmo #crypto .split .lead{margin-left:auto;margin-right:auto}
@@ -407,12 +412,10 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo [data-card] > div{position:static!important;height:auto!important;padding:clamp(56px,8vh,90px) 0!important}
 .venmo [data-cardimg]{transform:none!important;width:min(88%,380px)!important;margin:24px auto 0}
 
-/* PHONE JOURNEY (mobile): KEEP the scroll-scrubbed animation like web, just a
-   smaller phone that fits the screen. GSAP travels it; caption sits up top. */
+/* PHONE JOURNEY (mobile): ORIGINAL 300px phone (correct proportions) — GSAP
+   scales it down uniformly (scale ~0.66) via the timeline, so it stays realistic
+   and never gets thinned. */
 #journey{border-top:1px solid var(--hair)}
-#jphone{width:210px!important;margin-left:-105px!important;margin-top:-224px!important}
-#jphone > div{width:210px!important}
-#journey [style*="top: 13vh"], #journey > div:first-child{top:9vh!important}
 
 </style></head>
 <body>
@@ -681,18 +684,22 @@ a{text-decoration:none;color:inherit}button{font:inherit}
       gsap.set(l2,{opacity:1}); gsap.set(l1,{opacity:0}); return;
     }
     var isMobile=window.innerWidth<=860;
-    gsap.set(phone,{xPercent:-60,yPercent:4,rotate:-14,scale:0.8});
+    // Mobile keeps the ORIGINAL phone proportions (scaled via CSS), but a GENTLER
+    // travel range so the phone stays fully on the small screen.
+    var X0=isMobile?-26:-60, X1=isMobile?26:62, Y1=isMobile?26:40;
+    var SC0=isMobile?0.66:0.8, SCmid=isMobile?0.7:1.04, SCend=isMobile?0.64:0.95;
+    gsap.set(phone,{xPercent:X0,yPercent:4,rotate:-14,scale:SC0});
     gsap.set(s2,{opacity:0}); gsap.set(succ,{opacity:0,scale:0.6}); gsap.set(fill,{width:'14%'}); gsap.set(knob,{left:'6px'}); gsap.set(l2,{opacity:0,y:20});
 
     // Build the same keyframe timeline, but PAUSED — we scrub it manually so it
     // works identically whether driven by ScrollTrigger (desktop pin) or by a
     // plain scroll listener (mobile, where stacked pins are unreliable).
     var tl=gsap.timeline({paused:true});
-    tl.to(phone,{xPercent:62,ease:'power1.inOut',duration:1},0);
-    tl.to(phone,{yPercent:40,ease:'power2.in',duration:1},0);
+    tl.to(phone,{xPercent:X1,ease:'power1.inOut',duration:1},0);
+    tl.to(phone,{yPercent:Y1,ease:'power2.in',duration:1},0);
     tl.to(phone,{rotate:12,ease:'sine.inOut',duration:1},0);
-    tl.to(phone,{scale:1.04,ease:'power1.out',duration:0.5},0);
-    tl.to(phone,{scale:0.95,ease:'power1.in',duration:0.5},0.5);
+    tl.to(phone,{scale:SCmid,ease:'power1.out',duration:0.5},0);
+    tl.to(phone,{scale:SCend,ease:'power1.in',duration:0.5},0.5);
     tl.to(l1,{opacity:0,y:-20,duration:0.18},0.4);
     tl.to(s1,{opacity:0,duration:0.2},0.42);
     tl.to(s2,{opacity:1,duration:0.2},0.46);
