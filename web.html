@@ -1,6 +1,8 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AirPay</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
 a{text-decoration:none;color:inherit}button{font:inherit}
@@ -358,29 +360,10 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo-shorter #tip .wrap > div:first-child { margin-bottom: 20px !important; min-height: 0 !important; }
 .venmo-shorter #tip { padding-top: 0 !important; padding-bottom: 0 !important; }
 
-/* ---- swipe-to-pay phone animation ---- */
-.venmo .swipephone{width:min(84vw,320px);border-radius:34px;padding:8px;background:linear-gradient(180deg,#1b1f16,#0b0d08);border:1px solid rgba(255,255,255,0.10);box-shadow:0 40px 90px -30px rgba(143,212,51,0.22), inset 0 1px 0 rgba(255,255,255,0.14)}
-.venmo .sp-screen{position:relative;border-radius:28px;overflow:hidden;background:radial-gradient(120% 80% at 50% 0%, rgba(143,212,51,0.16), transparent 55%), #0a0c07;padding:26px 22px 22px;min-height:420px;display:flex;flex-direction:column;align-items:center}
-.venmo .sp-top{display:flex;align-items:center;gap:12px;align-self:flex-start;margin-bottom:26px}
-.venmo .sp-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6fb52a,#35a0c4);display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:0 0 auto}
-.venmo .sp-name{font-weight:700;font-size:1.02rem;color:var(--ink)}
-.venmo .sp-handle{font-size:.82rem;color:var(--ink-2)}
-.venmo .sp-amt{font-family:var(--sf);font-weight:800;font-size:3.4rem;letter-spacing:-0.03em;color:var(--ink);line-height:1}
-.venmo .sp-sub{color:var(--ink-2);font-size:.95rem;margin:6px 0 auto}
-.venmo .sp-track{position:relative;width:100%;height:64px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);display:flex;align-items:center;margin-top:24px;overflow:hidden}
-.venmo .sp-track-label{position:absolute;left:0;right:0;text-align:center;color:var(--ink-2);font-weight:600;font-size:.92rem;letter-spacing:.02em}
-.venmo .sp-thumb{position:absolute;left:6px;top:6px;width:52px;height:52px;border-radius:50%;background:var(--lime);color:var(--lime-ink);display:grid;place-items:center;z-index:2;box-shadow:0 6px 18px rgba(143,212,51,0.5)}
-.venmo .sp-sent{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 20%, rgba(143,212,51,0.2), transparent 60%), #0a0c07;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transform:scale(.96);pointer-events:none}
-.venmo .sp-check{width:64px;height:64px;border-radius:50%;background:var(--lime);display:grid;place-items:center;margin-bottom:6px}
-.venmo .sp-sent-t{font-family:var(--sf);font-weight:800;font-size:1.5rem;color:var(--ink)}
-.venmo .sp-sent-s{color:var(--ink-2);font-size:.92rem}
-.venmo .swipephone.playing .sp-thumb{animation:spThumb 3.4s cubic-bezier(.16,1,.3,1) infinite}
-.venmo .swipephone.playing .sp-track-label{animation:spLabel 3.4s ease infinite}
-.venmo .swipephone.playing .sp-sent{animation:spSent 3.4s ease infinite}
-@keyframes spThumb{0%,18%{top:6px}42%,66%{top:calc(-100% + 6px);opacity:1}67%,100%{opacity:0}}
-@keyframes spLabel{0%,30%{opacity:1}40%,100%{opacity:0}}
-@keyframes spSent{0%,45%{opacity:0;transform:scale(.96)}58%,88%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
-@media (prefers-reduced-motion: reduce){.venmo .swipephone.playing .sp-thumb,.venmo .swipephone.playing .sp-track-label,.venmo .swipephone.playing .sp-sent{animation:none}.venmo .sp-sent{opacity:1}}
+/* ---- phone journey (scroll-scrubbed) ---- */
+.venmo .jmono{font-family:var(--inter);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8b929c;font-weight:600}
+.venmo .journey-cap{transition:none}
+#journey{border-top:1px solid var(--hair)}
 
 </style></head>
 <body>
@@ -414,29 +397,70 @@ a{text-decoration:none;color:inherit}button{font:inherit}
   </div>
 </section>
 <section id="pay">
-  <div class="wrap" style="padding:clamp(64px,10vh,130px) 0 clamp(20px,4vh,40px);text-align:center;max-width:720px;margin:0 auto">
+  <div class="wrap" style="padding:clamp(64px,10vh,130px) 0 clamp(20px,4vh,50px);text-align:center;max-width:720px;margin:0 auto">
     <div class="kicker" style="margin-bottom:14px">Pay &amp; get paid</div>
     <h2 class="h2">Pick a person. Swipe. <span class="lime">Done.</span></h2>
-    <p class="lead" style="margin-top:18px;max-width:44ch;margin-left:auto;margin-right:auto">Choose who to pay, then swipe up to send. Money lands instantly — no account numbers, no fees, no waiting.</p>
+    <p class="lead" style="margin-top:18px;max-width:44ch;margin-left:auto;margin-right:auto">Scroll and watch it happen — choose who to pay, then swipe up to send. That's the whole app.</p>
   </div>
-  <!-- swipe-to-pay phone animation -->
-  <div class="wrap" style="display:flex;justify-content:center;padding-bottom:clamp(40px,6vh,80px)">
-    <div class="swipephone" id="swipephone">
-      <div class="sp-screen">
-        <div class="sp-top">
-          <span class="sp-av">OS</span>
-          <div><div class="sp-name">Omar Shento</div><div class="sp-handle">@omar · nearby</div></div>
+</section>
+
+<!-- ==== PHONE JOURNEY (exact port of components/v2/PhoneJourney.tsx) ==== -->
+<section id="journey" style="position:relative;height:100vh;overflow:hidden">
+  <div style="position:absolute;top:13vh;left:0;right:0;text-align:center;padding:0 24px;pointer-events:none;z-index:5;min-height:22vh">
+    <div id="jl1" class="journey-cap">
+      <div class="kicker" style="margin-bottom:10px">step 01</div>
+      <h2 class="h2" style="margin:0">Find who to pay.</h2>
+    </div>
+    <div id="jl2" class="journey-cap" style="position:absolute;top:0;left:0;right:0;opacity:0">
+      <div class="kicker" style="margin-bottom:10px">step 02</div>
+      <h2 class="h2" style="margin:0">Swipe. Sent.</h2>
+    </div>
+  </div>
+  <div id="jphone" style="position:absolute;top:50%;left:50%;width:300px;margin-left:-150px;margin-top:-320px;will-change:transform">
+    <div style="width:300px;aspect-ratio:9/19;border-radius:42px;padding:12px;background:linear-gradient(160deg,#1c1f24,#050506);border:1px solid rgba(255,255,255,0.14);box-shadow:0 50px 140px -30px rgba(135,202,45,0.35), inset 0 1px 0 rgba(255,255,255,0.08);position:relative;box-sizing:border-box">
+      <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);width:96px;height:26px;border-radius:14px;background:#000;z-index:3"></div>
+      <div style="width:100%;height:100%;border-radius:32px;background:linear-gradient(180deg,#0b0c0d,#000);overflow:hidden;position:relative">
+        <!-- STATE 1 -->
+        <div id="js1" style="position:absolute;inset:0;padding:58px 20px 22px;display:flex;flex-direction:column;color:#fff">
+          <div class="jmono" style="margin-bottom:14px">nearby</div>
+          <div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:rgba(135,202,45,0.08);border:1px solid rgba(135,202,45,0.25)">
+            <div style="width:44px;height:44px;border-radius:999px;background:linear-gradient(140deg,#4FA3F7,#222);display:flex;align-items:center;justify-content:center;color:#000;font-weight:700">MJ</div>
+            <div><div style="font-weight:600;font-size:16px">Maya Johnson</div><div style="font-size:12px;color:#8b929c">@maya · 2m away</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:10px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)">
+            <div style="width:40px;height:40px;border-radius:999px;background:linear-gradient(140deg,#F7A64F,#222);display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-size:13px">AR</div>
+            <div><div style="font-weight:600;font-size:15px">Alex Rivera</div><div style="font-size:11px;color:#8b929c">nearby</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;margin-top:10px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)">
+            <div style="width:40px;height:40px;border-radius:999px;background:linear-gradient(140deg,#C77DFF,#222);display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-size:13px">ST</div>
+            <div><div style="font-weight:600;font-size:15px">Sofia Tran</div><div style="font-size:11px;color:#8b929c">nearby</div></div>
+          </div>
+          <div style="margin-top:auto;font-size:11px;color:#8b929c;text-align:center">Tap someone to pay them</div>
         </div>
-        <div class="sp-amt">$25</div>
-        <div class="sp-sub">for coffee ☕</div>
-        <div class="sp-track">
-          <div class="sp-thumb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>
-          <div class="sp-track-label">Swipe up to pay</div>
-        </div>
-        <div class="sp-sent">
-          <div class="sp-check"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#0a2b06" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <div class="sp-sent-t">Sent $25</div>
-          <div class="sp-sent-s">to Omar · instantly</div>
+        <!-- STATE 2 -->
+        <div id="js2" style="position:absolute;inset:0;padding:58px 20px 22px;display:flex;flex-direction:column;color:#fff;opacity:0">
+          <div class="jmono" style="margin-bottom:6px">sending to</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+            <div style="width:38px;height:38px;border-radius:999px;background:linear-gradient(140deg,#4FA3F7,#222);display:flex;align-items:center;justify-content:center;color:#000;font-weight:700;font-size:13px">MJ</div>
+            <div><div style="font-weight:600;font-size:15px">Maya Johnson</div><div style="font-size:12px;color:#8b929c">@maya</div></div>
+          </div>
+          <div style="text-align:center;margin:auto 0">
+            <div style="font-size:12px;color:#8b929c;margin-bottom:6px">Amount</div>
+            <div style="font-family:var(--sf);font-size:50px;font-weight:800;letter-spacing:-0.03em">$24</div>
+            <div style="font-size:12px;color:#8b929c;margin-top:6px">Dinner 🍜</div>
+          </div>
+          <div style="margin-top:auto;height:54px;border-radius:999px;background:rgba(135,202,45,0.12);border:1px solid rgba(135,202,45,0.3);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden">
+            <div id="jfill" style="position:absolute;left:0;top:0;bottom:0;width:14%;background:rgba(135,202,45,0.35)"></div>
+            <span style="position:relative;color:#87ca2d;font-size:13px;font-weight:600;z-index:1">Swipe to pay</span>
+            <div id="jknob" style="position:absolute;left:6px;top:6px;bottom:6px;width:40px;border-radius:999px;background:#87ca2d;color:#000;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;z-index:2">→</div>
+          </div>
+          <div id="jsuccess" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,8,4,0.9);opacity:0">
+            <div style="width:84px;height:84px;border-radius:999px;background:radial-gradient(circle at 50% 40%, rgba(135,202,45,0.35), transparent 70%);display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#87ca2d" stroke-width="1.5"/><path d="m8 12.5 2.5 2.5 5.5-6" stroke="#87ca2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="font-family:var(--sf);font-size:22px;font-weight:800">Paid $24</div>
+            <div style="font-size:13px;color:#8b929c;margin-top:4px">to Maya Johnson</div>
+          </div>
         </div>
       </div>
     </div>
@@ -577,9 +601,38 @@ a{text-decoration:none;color:inherit}button{font:inherit}
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.16,rootMargin:'0px 0px -8% 0px'});
   root.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 
-  // swipe-to-pay phone: start its animation loop when it scrolls into view
-  var sp=root.querySelector('#swipephone');
-  if(sp){ var spo=new IntersectionObserver(function(es){es.forEach(function(e){ sp.classList.toggle('playing', e.isIntersecting); });},{threshold:0.35}); spo.observe(sp); }
+  // PHONE JOURNEY — exact port of components/v2/PhoneJourney.tsx (GSAP + ScrollTrigger).
+  // Pinned section; phone travels top-left -> bottom-right on a curved path, UI
+  // cross-fades State1 (find who to pay) -> State2 (swipe -> success), all scrubbed.
+  (function(){
+    var jsec=root.querySelector('#journey'); if(!jsec||typeof gsap==='undefined')return;
+    var reduce=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)').matches:false;
+    var q=function(s){return jsec.querySelector(s);};
+    var phone=q('#jphone'),s1=q('#js1'),s2=q('#js2'),knob=q('#jknob'),fill=q('#jfill'),succ=q('#jsuccess'),l1=q('#jl1'),l2=q('#jl2');
+    if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+    if(reduce){
+      gsap.set(phone,{xPercent:20,yPercent:20,rotate:4,scale:1});
+      gsap.set(s1,{opacity:0}); gsap.set(fill,{width:'100%'}); gsap.set(succ,{opacity:1,scale:1});
+      gsap.set(l2,{opacity:1}); gsap.set(l1,{opacity:0}); return;
+    }
+    gsap.set(phone,{xPercent:-60,yPercent:4,rotate:-14,scale:0.8});
+    gsap.set(s2,{opacity:0}); gsap.set(succ,{opacity:0,scale:0.6}); gsap.set(fill,{width:'14%'}); gsap.set(knob,{left:'6px'}); gsap.set(l2,{opacity:0,y:20});
+    var tl=gsap.timeline({scrollTrigger:{trigger:jsec,start:'top top',end:'+=2200',pin:true,scrub:1,anticipatePin:1}});
+    tl.to(phone,{xPercent:62,ease:'power1.inOut',duration:1},0);
+    tl.to(phone,{yPercent:40,ease:'power2.in',duration:1},0);
+    tl.to(phone,{rotate:12,ease:'sine.inOut',duration:1},0);
+    tl.to(phone,{scale:1.04,ease:'power1.out',duration:0.5},0);
+    tl.to(phone,{scale:0.95,ease:'power1.in',duration:0.5},0.5);
+    tl.to(l1,{opacity:0,y:-20,duration:0.18},0.4);
+    tl.to(s1,{opacity:0,duration:0.2},0.42);
+    tl.to(s2,{opacity:1,duration:0.2},0.46);
+    tl.to(l2,{opacity:1,y:0,duration:0.18},0.5);
+    tl.to(fill,{width:'100%',ease:'power2.inOut',duration:0.22},0.62);
+    tl.to(knob,{left:'calc(100% - 46px)',ease:'power2.inOut',duration:0.22},0.62);
+    tl.to(succ,{opacity:1,scale:1,ease:'back.out(1.7)',duration:0.2},0.84);
+    tl.to([fill,knob],{opacity:0,duration:0.15},0.86);
+    if(window.ScrollTrigger) ScrollTrigger.refresh();
+  })();
 
   // SCROLL-LINKED CARD (exact port of CardFeature): tall section pins a sticky
   // inner; scroll progress p drives the card rotate/float + the highlighted label + copy.
