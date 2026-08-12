@@ -604,13 +604,13 @@ a{text-decoration:none;color:inherit}button{font:inherit}
       </div>
       <div class="foot-col"><h4>Product</h4><a href="#pay">How it works</a><a href="#card">Card</a><a href="#crypto">Crypto</a></div>
       <div class="foot-col"><h4>Company</h4><a href="#contact">Contact</a><a href="mailto:admin@airpay.global">admin@airpay.global</a></div>
-      <div class="foot-col"><h4>Legal</h4><a href="https://www.airpay.global/privacy" target="_blank" rel="noopener">Privacy Policy</a><a href="https://www.airpay.global/deleteaccount" target="_blank" rel="noopener">Delete account</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="./privacy.html" target="_blank" rel="noopener">Privacy Policy</a><a href="./deleteaccount.html" target="_blank" rel="noopener">Delete account</a></div>
     </div>
     <div class="foot-bottom">
       <p class="foot-legal">© 2026 AirPay Inc. Payments powered by Coinbase. AirPay is a technology company, not a bank.</p>
       <div class="foot-bottom-links">
-        <a href="https://www.airpay.global/privacy" target="_blank" rel="noopener">Privacy Policy</a>
-        <a href="https://www.airpay.global/deleteaccount" target="_blank" rel="noopener">Delete account</a>
+        <a href="./privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+        <a href="./deleteaccount.html" target="_blank" rel="noopener">Delete account</a>
       </div>
     </div>
   </div>
@@ -642,10 +642,14 @@ a{text-decoration:none;color:inherit}button{font:inherit}
       gsap.set(s1,{opacity:0}); gsap.set(fill,{width:'100%'}); gsap.set(succ,{opacity:1,scale:1});
       gsap.set(l2,{opacity:1}); gsap.set(l1,{opacity:0}); return;
     }
-    gsap.set(phone,{xPercent:-60,yPercent:4,rotate:-14,scale:0.8});
+    var isMobile=window.innerWidth<=860;
+    // mobile: shorter pin + smaller travel range so the motion is clearly visible on a small screen
+    var END=isMobile?'+=1400':'+=2200';
+    var xFrom=isMobile?-30:-60, xTo=isMobile?30:62;
+    gsap.set(phone,{xPercent:xFrom,yPercent:4,rotate:-14,scale:0.8});
     gsap.set(s2,{opacity:0}); gsap.set(succ,{opacity:0,scale:0.6}); gsap.set(fill,{width:'14%'}); gsap.set(knob,{left:'6px'}); gsap.set(l2,{opacity:0,y:20});
-    var tl=gsap.timeline({scrollTrigger:{trigger:jsec,start:'top top',end:'+=2200',pin:true,scrub:1,anticipatePin:1}});
-    tl.to(phone,{xPercent:62,ease:'power1.inOut',duration:1},0);
+    var tl=gsap.timeline({scrollTrigger:{trigger:jsec,start:'top top',end:END,pin:true,scrub:1,anticipatePin:1}});
+    tl.to(phone,{xPercent:xTo,ease:'power1.inOut',duration:1},0);
     tl.to(phone,{yPercent:40,ease:'power2.in',duration:1},0);
     tl.to(phone,{rotate:12,ease:'sine.inOut',duration:1},0);
     tl.to(phone,{scale:1.04,ease:'power1.out',duration:0.5},0);
