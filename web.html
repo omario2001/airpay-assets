@@ -364,6 +364,17 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo .jmono{font-family:var(--inter);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8b929c;font-weight:600}
 .venmo .journey-cap{transition:none}
 #journey{border-top:1px solid var(--hair)}
+/* ---- contact section ---- */
+.venmo .contact-card{text-align:center;max-width:640px;margin:0 auto;padding:clamp(40px,7vw,72px) clamp(24px,5vw,56px);border-radius:34px;
+  background:radial-gradient(90% 130% at 50% 0%, rgba(143,212,51,0.12), transparent 60%), #0b0d08;border:1px solid var(--hair)}
+.venmo .contact-card .h2{color:var(--ink)}
+/* ---- footer bottom row (legal + privacy/delete links) ---- */
+.venmo .foot-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:24px;border-top:1px solid var(--hair)}
+.venmo .foot-bottom .foot-legal{margin-top:0;max-width:52ch}
+.venmo .foot-bottom-links{display:flex;gap:22px;flex:0 0 auto}
+.venmo .foot-bottom-links a{color:var(--ink-2);font-size:.9rem;font-weight:500;transition:color .2s}
+.venmo .foot-bottom-links a:hover{color:var(--lime)}
+@media (max-width:860px){.venmo .foot-bottom{flex-direction:column;align-items:flex-start;text-align:left}}
 
 </style></head>
 <body>
@@ -572,6 +583,16 @@ a{text-decoration:none;color:inherit}button{font:inherit}
     </div>
   </div>
 </section>
+<section id="contact" class="pad">
+  <div class="wrap">
+    <div class="contact-card reveal">
+      <div class="kicker" style="margin-bottom:14px">Get in touch</div>
+      <h2 class="h2">Questions? <span class="lime">Talk to us.</span></h2>
+      <p class="lead" style="margin:16px auto 26px;max-width:44ch">Support, press, partnerships, or privacy — we read every message. We'll get back to you.</p>
+      <a class="btn btn-lime" href="mailto:admin@airpay.global">admin@airpay.global</a>
+    </div>
+  </div>
+</section>
 </main>
 
 <footer class="pad">
@@ -582,10 +603,16 @@ a{text-decoration:none;color:inherit}button{font:inherit}
         <p style="color:var(--ink-2);margin-top:14px;max-width:26ch">Move money in a swipe. Nearby, private, instant.</p>
       </div>
       <div class="foot-col"><h4>Product</h4><a href="#pay">How it works</a><a href="#card">Card</a><a href="#crypto">Crypto</a></div>
-      <div class="foot-col"><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
-      <div class="foot-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Delete account</a></div>
+      <div class="foot-col"><h4>Company</h4><a href="#contact">Contact</a><a href="mailto:admin@airpay.global">admin@airpay.global</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="https://www.airpay.global/privacy" target="_blank" rel="noopener">Privacy Policy</a><a href="https://www.airpay.global/deleteaccount" target="_blank" rel="noopener">Delete account</a></div>
     </div>
-    <p class="foot-legal">© 2026 AirPay Inc. Payments powered by Coinbase. AirPay is a technology company, not a bank.</p>
+    <div class="foot-bottom">
+      <p class="foot-legal">© 2026 AirPay Inc. Payments powered by Coinbase. AirPay is a technology company, not a bank.</p>
+      <div class="foot-bottom-links">
+        <a href="https://www.airpay.global/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        <a href="https://www.airpay.global/deleteaccount" target="_blank" rel="noopener">Delete account</a>
+      </div>
+    </div>
   </div>
 </footer>
 </div>
@@ -606,9 +633,6 @@ a{text-decoration:none;color:inherit}button{font:inherit}
   // cross-fades State1 (find who to pay) -> State2 (swipe -> success), all scrubbed.
   (function(){
     var jsec=root.querySelector('#journey'); if(!jsec||typeof gsap==='undefined')return;
-    // On narrow screens (mobile) the CSS lays the journey out static + centered —
-    // skip the pinned scrub entirely so it doesn't fight the layout.
-    if(window.innerWidth<=860) return;
     var reduce=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)').matches:false;
     var q=function(s){return jsec.querySelector(s);};
     var phone=q('#jphone'),s1=q('#js1'),s2=q('#js2'),knob=q('#jknob'),fill=q('#jfill'),succ=q('#jsuccess'),l1=q('#jl1'),l2=q('#jl2');
@@ -634,7 +658,15 @@ a{text-decoration:none;color:inherit}button{font:inherit}
     tl.to(knob,{left:'calc(100% - 46px)',ease:'power2.inOut',duration:0.22},0.62);
     tl.to(succ,{opacity:1,scale:1,ease:'back.out(1.7)',duration:0.2},0.84);
     tl.to([fill,knob],{opacity:0,duration:0.15},0.86);
-    if(window.ScrollTrigger) ScrollTrigger.refresh();
+    // Recompute pin positions after layout/images settle (mobile un-pins the card
+    // section via CSS, which changes doc height AFTER init → stale trigger offsets).
+    if(window.ScrollTrigger){
+      ScrollTrigger.refresh();
+      window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
+      setTimeout(function(){ ScrollTrigger.refresh(); }, 600);
+      setTimeout(function(){ ScrollTrigger.refresh(); }, 1600);
+      window.addEventListener('resize', function(){ ScrollTrigger.refresh(); });
+    }
   })();
 
   // SCROLL-LINKED CARD (exact port of CardFeature): tall section pins a sticky
