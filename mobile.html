@@ -681,13 +681,14 @@ a{text-decoration:none;color:inherit}button{font:inherit}
       gsap.set(l2,{opacity:1}); gsap.set(l1,{opacity:0}); return;
     }
     var isMobile=window.innerWidth<=860;
-    // mobile: shorter pin + smaller travel range so the motion is clearly visible on a small screen
-    var END=isMobile?'+=1400':'+=2200';
-    var xFrom=isMobile?-30:-60, xTo=isMobile?30:62;
-    gsap.set(phone,{xPercent:xFrom,yPercent:4,rotate:-14,scale:0.8});
+    gsap.set(phone,{xPercent:-60,yPercent:4,rotate:-14,scale:0.8});
     gsap.set(s2,{opacity:0}); gsap.set(succ,{opacity:0,scale:0.6}); gsap.set(fill,{width:'14%'}); gsap.set(knob,{left:'6px'}); gsap.set(l2,{opacity:0,y:20});
-    var tl=gsap.timeline({scrollTrigger:{trigger:jsec,start:'top top',end:END,pin:true,scrub:1,anticipatePin:1}});
-    tl.to(phone,{xPercent:xTo,ease:'power1.inOut',duration:1},0);
+
+    // Build the same keyframe timeline, but PAUSED — we scrub it manually so it
+    // works identically whether driven by ScrollTrigger (desktop pin) or by a
+    // plain scroll listener (mobile, where stacked pins are unreliable).
+    var tl=gsap.timeline({paused:true});
+    tl.to(phone,{xPercent:62,ease:'power1.inOut',duration:1},0);
     tl.to(phone,{yPercent:40,ease:'power2.in',duration:1},0);
     tl.to(phone,{rotate:12,ease:'sine.inOut',duration:1},0);
     tl.to(phone,{scale:1.04,ease:'power1.out',duration:0.5},0);
@@ -700,14 +701,37 @@ a{text-decoration:none;color:inherit}button{font:inherit}
     tl.to(knob,{left:'calc(100% - 46px)',ease:'power2.inOut',duration:0.22},0.62);
     tl.to(succ,{opacity:1,scale:1,ease:'back.out(1.7)',duration:0.2},0.84);
     tl.to([fill,knob],{opacity:0,duration:0.15},0.86);
-    // Recompute pin positions after layout/images settle (mobile un-pins the card
-    // section via CSS, which changes doc height AFTER init → stale trigger offsets).
-    if(window.ScrollTrigger){
+
+    if(!isMobile && window.ScrollTrigger){
+      // DESKTOP: real pinned scrub
+      ScrollTrigger.create({trigger:jsec,start:'top top',end:'+=2200',pin:true,scrub:1,anticipatePin:1,
+        onUpdate:function(self){ tl.progress(self.progress); }});
       ScrollTrigger.refresh();
-      window.addEventListener('load', function(){ ScrollTrigger.refresh(); });
-      setTimeout(function(){ ScrollTrigger.refresh(); }, 600);
-      setTimeout(function(){ ScrollTrigger.refresh(); }, 1600);
-      window.addEventListener('resize', function(){ ScrollTrigger.refresh(); });
+      window.addEventListener('load',function(){ScrollTrigger.refresh();});
+      setTimeout(function(){ScrollTrigger.refresh();},800);
+      window.addEventListener('resize',function(){ScrollTrigger.refresh();});
+    } else {
+      // MOBILE: no pin. Make the section tall, phone sits sticky-centered, and we
+      // map scroll-through-the-section to timeline progress with a plain listener.
+      jsec.style.height='260vh'; jsec.style.overflow='visible';
+      jsec.style.position='relative';
+      var inner=jsec.querySelector('#jphone').parentElement===jsec?jsec:jsec;
+      // pin the phone + caption in the middle of the viewport while scrolling the tall section
+      var stick=document.createElement('div');
+      stick.style.cssText='position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center';
+      // move caption + phone into the sticky wrapper
+      var cap=jsec.querySelector('#jl1').parentElement, ph=jsec.querySelector('#jphone');
+      stick.appendChild(cap); stick.appendChild(ph);
+      jsec.insertBefore(stick, jsec.firstChild);
+      cap.style.position='absolute'; cap.style.top='9vh';
+      ph.style.position='absolute'; ph.style.left='50%'; ph.style.top='50%';
+      var raf=0;
+      function onJ(){ cancelAnimationFrame(raf); raf=requestAnimationFrame(function(){
+        var r=jsec.getBoundingClientRect(), total=jsec.offsetHeight-window.innerHeight;
+        var p=Math.min(1,Math.max(0,-r.top/total));
+        tl.progress(p);
+      }); }
+      window.addEventListener('scroll',onJ,{passive:true}); window.addEventListener('resize',onJ); onJ();
     }
   })();
 
