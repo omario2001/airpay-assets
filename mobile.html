@@ -417,6 +417,12 @@ a{text-decoration:none;color:inherit}button{font:inherit}
    and never gets thinned. */
 #journey{border-top:1px solid var(--hair)}
 
+/* auto-hiding nav: slides up out of view on scroll down, slides back on
+   scroll up or tap; always shown near the top of the page */
+.venmo .nav{transition:transform .35s cubic-bezier(.16,1,.3,1),background .3s,box-shadow .3s,border-color .3s;will-change:transform}
+.venmo .nav.nav-hidden{transform:translateY(-110%)}
+@media (prefers-reduced-motion: reduce){.venmo .nav{transition:background .3s,box-shadow .3s,border-color .3s}}
+
 </style></head>
 <body>
 <div class="venmo" data-theme="dark" id="top">
@@ -660,11 +666,26 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 <script>
 (function(){
   var root=document.currentScript.closest('.venmo')||document.querySelector('.venmo');
-  // nav scrolled
+  // nav scrolled + auto-hide: scroll down = slide away, scroll up = slide back
   var nav=root.querySelector('#nav');
-  function onScroll(){ if(nav) nav.classList.toggle('scrolled', window.scrollY>24);
-    var coin=root.querySelector('#coin'); if(coin){ var y=window.scrollY; coin.style.transform='translateY('+(y*-0.05)+'px) rotate('+(-6+y*0.03)+'deg)'; } }
+  var lastY=window.scrollY, HIDE_AFTER=90, JITTER=4;
+  function onScroll(){ var y=Math.max(0,window.scrollY);
+    if(nav){ nav.classList.toggle('scrolled', y>24);
+      var dy=y-lastY;
+      if(Math.abs(dy)>JITTER){
+        if(dy>0 && y>HIDE_AFTER) nav.classList.add('nav-hidden');
+        else if(dy<0) nav.classList.remove('nav-hidden');
+        lastY=y;
+      }
+      if(y<=HIDE_AFTER) nav.classList.remove('nav-hidden');
+    }
+    var coin=root.querySelector('#coin'); if(coin){ var cy=window.scrollY; coin.style.transform='translateY('+(cy*-0.05)+'px) rotate('+(-6+cy*0.03)+'deg)'; } }
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  // tap anywhere brings the nav back (a tap = touch that barely moves)
+  var tX=0,tY=0,tT=0;
+  window.addEventListener('touchstart',function(e){var t=e.touches[0];if(!t)return;tX=t.clientX;tY=t.clientY;tT=Date.now();},{passive:true});
+  window.addEventListener('touchend',function(e){var t=e.changedTouches[0];if(!t||!nav)return;
+    if(Date.now()-tT<350&&Math.abs(t.clientX-tX)<10&&Math.abs(t.clientY-tY)<10)nav.classList.remove('nav-hidden');},{passive:true});
   // reveal
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.16,rootMargin:'0px 0px -8% 0px'});
   root.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
