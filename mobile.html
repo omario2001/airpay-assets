@@ -378,7 +378,7 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 
 /* mobile-first tweaks: force single column, tighter type, comfortable tap targets */
 .venmo .hero-grid{grid-template-columns:1fr!important}
-.venmo .hero-coin{order:-1}.venmo .hero-coin img{width:min(72%,300px)}
+.venmo .hero-coin{order:-1}.venmo .hero-coin img{width:min(64%,280px)}
 .venmo .split,.venmo .frow{grid-template-columns:1fr!important}
 .venmo .frow.flip .frow-media{order:0}
 .venmo .nav .links{display:none}
@@ -388,16 +388,16 @@ a{text-decoration:none;color:inherit}button{font:inherit}
 .venmo .gb-photo,.venmo .gb-brand{display:none}.venmo .gb-post{width:min(94%,400px)}
 
 /* ===== MOBILE: CENTER EVERYTHING ===== */
-/* hero fills the viewport: coin + headline + paragraph on-screen, the CTA
-   buttons + trust row sit just BELOW the fold (revealed on first scroll) */
-.venmo .hero{min-height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:0;align-items:start}
-.venmo .hero-grid{gap:clamp(16px,3vh,32px);padding-top:6px}
+/* hero = ONE clean viewport: top padding clears the 74px fixed nav, then
+   coin + kicker + headline + copy + CTAs + trust all visible together */
+.venmo .hero{min-height:100svh;padding-top:calc(env(safe-area-inset-top,0px) + 84px);padding-bottom:28px;align-items:center}
+.venmo .hero-grid{gap:clamp(12px,2.2vh,22px);padding-top:0}
 .venmo .hero-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
 .venmo .hero-copy .lead{max-width:40ch;margin-left:auto;margin-right:auto}
-/* push the CTA + trust row below the fold so the hero (coin + headline + copy)
-   fills the first screen; they reveal on the first scroll */
-.venmo .hero-cta{justify-content:center;margin-top:clamp(300px,54vh,540px)}
-.venmo .trust{justify-content:center;margin-top:32px}
+.venmo .hero-cta{justify-content:center;margin-top:0}
+.venmo .trust{justify-content:center;margin-top:26px}
+/* short screens (SE-class): trim the coin so the full stack still fits */
+@media (max-height:720px){.venmo .hero-coin img{width:min(52%,220px)}}
 /* crypto + card copy columns centered */
 .venmo #crypto .split > div:first-child{text-align:center;display:flex;flex-direction:column;align-items:center}
 .venmo #crypto .split .lead{margin-left:auto;margin-right:auto}
